@@ -1,12 +1,12 @@
-use crate::{errors::GlError, gl, RendererContext};
+use crate::{errors::GlError, gl, internal_game_loop::RendererContext};
 
 use super::{Drawable, Fragment, ProgramWrapper, Shader, Vertex};
 
 static FRAGMENT: Shader<Fragment> =
-    Shader::create_fragment_shader(include_str!("../shader/fragment_shader.glsl"));
+    Shader::create_fragment_shader(include_str!("shaders/fragment_shader.glsl"));
 
 static VERTEX: Shader<Vertex> =
-    Shader::create_vertex_shader(include_str!("../shader/vertex_shader.glsl"));
+    Shader::create_vertex_shader(include_str!("shaders/vertex_shader.glsl"));
 
 pub struct TestGameObject {
     program: ProgramWrapper,

@@ -15,7 +15,7 @@ use crate::{
         self,
         types::{GLchar, GLint},
     },
-    RendererContext,
+    internal_game_loop::RendererContext,
 };
 
 pub struct Fragment;
@@ -115,7 +115,7 @@ impl Shader<Vertex> {
     }
 }
 
-pub struct Program {
+struct Program {
     _vertex_shader: ShaderHandle<Vertex>,
     _fragment_shader: ShaderHandle<Fragment>,
     program_id: u32,
@@ -198,7 +198,7 @@ unsafe fn compile_shader(
     Ok(shader)
 }
 
-pub unsafe fn create_program(
+unsafe fn create_program(
     vertex_shader: &ShaderHandle<Vertex>,
     fragment_shader: &ShaderHandle<Fragment>,
 ) -> Result<u32, GlError> {
