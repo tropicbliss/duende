@@ -126,7 +126,7 @@ struct InternalColor(f32, f32, f32, f32);
 
 impl Default for InternalColor {
     fn default() -> Self {
-        InternalColor(0.1, 0.1, 0.1, 0.9)
+        InternalColor(0.1, 0.1, 0.1, 1.0)
     }
 }
 
