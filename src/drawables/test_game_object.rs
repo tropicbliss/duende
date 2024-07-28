@@ -1,6 +1,6 @@
-use crate::{errors::GlError, gl, internal_game_loop::RendererContext};
+use crate::{errors::GlError, gl};
 
-use super::{Drawable, Fragment, ProgramWrapper, Shader, Vertex};
+use super::{Drawable, Fragment, ProgramWrapper, RendererContext, Shader, Vertex};
 
 static FRAGMENT: Shader<Fragment> =
     Shader::create_fragment_shader(include_str!("shaders/fragment_shader.glsl"));

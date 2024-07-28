@@ -267,28 +267,6 @@ struct AppState {
     window: Window,
 }
 
-pub struct RendererContext<'a> {
-    pub(crate) bump: &'a Bump,
-    pub(crate) command_queue: Vec<Box<dyn FnOnce(), &'a Bump>>,
-}
-
-impl<'a> RendererContext<'a> {
-    pub(crate) fn new(bump: &'a Bump) -> Self {
-        Self {
-            bump,
-            command_queue: Vec::new(),
-        }
-    }
-
-    pub fn add_commands<F>(&mut self, queue: F)
-    where
-        F: FnOnce() + 'static,
-    {
-        let object = Box::new_in(queue, self.bump);
-        self.command_queue.push(object);
-    }
-}
-
 fn gl_config_picker(mut configs: Box<dyn Iterator<Item = Config> + '_>) -> Config {
     const DEFAULT_MSAA: u8 = 4;
 

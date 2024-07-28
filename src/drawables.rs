@@ -1,12 +1,13 @@
 pub mod test_game_object;
 
+use bumpalo::Bump;
+
 use crate::{
     errors::GlError,
     gl::{
         self,
         types::{GLchar, GLint},
     },
-    internal_game_loop::RendererContext,
 };
 use std::{
     cell::OnceCell,
@@ -228,4 +229,26 @@ unsafe fn create_program(
         ));
     }
     Ok(program_id)
+}
+
+pub struct RendererContext<'a> {
+    pub(crate) bump: &'a Bump,
+    pub(crate) command_queue: Vec<Box<dyn FnOnce(), &'a Bump>>,
+}
+
+impl<'a> RendererContext<'a> {
+    pub(crate) fn new(bump: &'a Bump) -> Self {
+        Self {
+            bump,
+            command_queue: Vec::new(),
+        }
+    }
+
+    pub fn add_commands<F>(&mut self, queue: F)
+    where
+        F: FnOnce() + 'static,
+    {
+        let object = Box::new_in(queue, self.bump);
+        self.command_queue.push(object);
+    }
 }

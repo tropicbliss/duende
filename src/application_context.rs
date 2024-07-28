@@ -1,5 +1,7 @@
 use crate::{
-    drawables::Drawable, errors::GlError, gl, internal_game_loop::RendererContext,
+    drawables::{Drawable, RendererContext},
+    errors::GlError,
+    gl,
     mut_cell::MutCell,
 };
 use bumpalo::Bump;
