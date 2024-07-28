@@ -12,7 +12,7 @@ pub enum DuendeError {
 
 #[derive(thiserror::Error, Debug)]
 pub enum UnsupportedDevice {
-    #[error("cursor grab")]
+    #[error("cursor grab error")]
     CursorGrab,
 }
 
