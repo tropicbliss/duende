@@ -1,15 +1,13 @@
-use std::ffi::{CStr, CString};
-
-use bumpalo::Bump;
-use fnv::FnvHashSet;
-use glutin::prelude::GlDisplay;
-use tracing::info;
-use winit::keyboard::NamedKey;
-
 use crate::{
     drawables::Drawable, errors::GlError, gl, internal_game_loop::RendererContext,
     mut_cell::MutCell,
 };
+use bumpalo::Bump;
+use fnv::FnvHashSet;
+use glutin::prelude::GlDisplay;
+use std::ffi::{CStr, CString};
+use tracing::info;
+use winit::keyboard::NamedKey;
 
 pub struct ApplicationContext<'a> {
     input_events: FnvHashSet<Event>,

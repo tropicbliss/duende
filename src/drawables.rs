@@ -1,14 +1,5 @@
 pub mod test_game_object;
 
-use std::{
-    cell::OnceCell,
-    ffi::CString,
-    sync::{
-        atomic::{AtomicU32, Ordering},
-        Arc, LazyLock,
-    },
-};
-
 use crate::{
     errors::GlError,
     gl::{
@@ -16,6 +7,14 @@ use crate::{
         types::{GLchar, GLint},
     },
     internal_game_loop::RendererContext,
+};
+use std::{
+    cell::OnceCell,
+    ffi::CString,
+    sync::{
+        atomic::{AtomicU32, Ordering},
+        Arc, LazyLock,
+    },
 };
 
 pub struct Fragment;
