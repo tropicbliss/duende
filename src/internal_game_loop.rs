@@ -280,10 +280,6 @@ impl<'a> RendererContext<'a> {
         }
     }
 
-    pub fn get_bump_allocator(&self) -> &'a Bump {
-        self.bump
-    }
-
     pub fn add_commands<F>(&mut self, queue: F)
     where
         F: FnOnce() + 'static,
