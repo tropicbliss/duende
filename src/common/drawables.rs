@@ -1,14 +1,4 @@
-pub mod test_game_object;
-
 use bumpalo::Bump;
-
-use crate::{
-    errors::GlError,
-    gl::{
-        self,
-        types::{GLchar, GLint},
-    },
-};
 use std::{
     cell::OnceCell,
     ffi::CString,
@@ -18,12 +8,20 @@ use std::{
     },
 };
 
+use crate::common::{
+    errors::GlError,
+    gl::{
+        self,
+        types::{GLchar, GLint},
+    },
+};
+
 pub struct Fragment;
 
 pub struct Vertex;
 
 pub trait Drawable {
-    fn draw<'a>(&self, ctx: &mut RendererContext<'a>) -> Result<(), GlError>;
+    fn draw(&self, ctx: &mut RendererContext) -> Result<(), GlError>;
 }
 
 pub struct ProgramWrapper {
@@ -122,7 +120,7 @@ struct Program {
 }
 
 impl Program {
-    /// SAFETY: Keep this program around for the entirety of the game object's lifespan. Do not drop this prematurely.
+    /// # SAFETY: Keep this program around for the entirety of the game object's lifespan. Do not drop this prematurely.
     pub unsafe fn new(
         vertex_shader: ShaderHandle<Vertex>,
         fragment_shader: ShaderHandle<Fragment>,
@@ -180,8 +178,7 @@ unsafe fn compile_shader(
     if compile_status != (gl::TRUE as GLint) {
         let mut log_length = 0;
         gl::GetShaderiv(shader, gl::INFO_LOG_LENGTH, &mut log_length);
-        let mut log = Vec::with_capacity(log_length as usize);
-        log.set_len((log_length as usize) - 1);
+        let mut log = vec![0; log_length as usize];
         gl::GetShaderInfoLog(
             shader,
             log_length,
@@ -213,8 +210,7 @@ unsafe fn create_program(
     if link_status != (gl::TRUE as GLint) {
         let mut log_length = 0;
         gl::GetProgramiv(program_id, gl::INFO_LOG_LENGTH, &mut log_length);
-        let mut log = Vec::with_capacity(log_length as usize);
-        log.set_len((log_length as usize) - 1);
+        let mut log = vec![0; log_length as usize];
         gl::GetProgramInfoLog(
             program_id,
             log_length,

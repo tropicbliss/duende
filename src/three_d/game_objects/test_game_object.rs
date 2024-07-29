@@ -1,6 +1,8 @@
-use crate::{errors::GlError, gl};
-
-use super::{Drawable, Fragment, ProgramWrapper, RendererContext, Shader, Vertex};
+use crate::common::{
+    drawables::{Drawable, Fragment, ProgramWrapper, RendererContext, Shader, Vertex},
+    errors::GlError,
+    gl,
+};
 
 static FRAGMENT: Shader<Fragment> =
     Shader::create_fragment_shader(include_str!("shaders/fragment_shader.glsl"));
@@ -20,8 +22,14 @@ impl TestGameObject {
     }
 }
 
+impl Default for TestGameObject {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Drawable for TestGameObject {
-    fn draw<'a>(&self, ctx: &mut RendererContext<'a>) -> Result<(), GlError> {
+    fn draw(&self, ctx: &mut RendererContext<'_>) -> Result<(), GlError> {
         unsafe {
             let program_id = self.program.get_program_id()?;
             ctx.add_commands(move || {

@@ -1,5 +1,8 @@
 use duende::{
-    application_context::ApplicationContext, drawables::test_game_object::TestGameObject,
+    three_d::{
+        application_context::ThreeDApplicationContext,
+        game_objects::test_game_object::TestGameObject,
+    },
     ApplicationBuilder, Game,
 };
 use winit::keyboard::NamedKey;
@@ -22,14 +25,14 @@ impl TestGame {
 }
 
 impl Game for TestGame {
-    fn game_loop(&self, context: &mut ApplicationContext) {
+    fn game_loop(&self, context: &mut ThreeDApplicationContext) {
         if context.is_key_pressed(NamedKey::Escape) {
             context.exit();
         }
         context.draw_game_object(&self.object);
     }
 
-    fn teardown(&self, _context: &mut ApplicationContext) {
+    fn teardown(&self, _context: &mut ThreeDApplicationContext) {
         println!("Bye bye!");
     }
 }

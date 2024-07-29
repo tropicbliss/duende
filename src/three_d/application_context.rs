@@ -1,8 +1,10 @@
 use crate::{
-    drawables::{Drawable, RendererContext},
-    errors::GlError,
-    gl,
-    mut_cell::MutCell,
+    common::{
+        drawables::{Drawable, RendererContext},
+        errors::GlError,
+        gl,
+    },
+    utils::mut_cell::MutCell,
 };
 use bumpalo::Bump;
 use fnv::FnvHashSet;
@@ -11,7 +13,7 @@ use std::ffi::{CStr, CString};
 use tracing::info;
 use winit::keyboard::NamedKey;
 
-pub struct ApplicationContext<'a> {
+pub struct ThreeDApplicationContext<'a> {
     input_events: FnvHashSet<Event>,
     output_commands: Vec<Command, &'a Bump>,
     background_color: MutCell<InternalColor>,
@@ -19,7 +21,7 @@ pub struct ApplicationContext<'a> {
     exit_status: Result<(), GlError>,
 }
 
-impl<'a> ApplicationContext<'a> {
+impl<'a> ThreeDApplicationContext<'a> {
     pub(crate) fn new<D>(gl_display: &D, bump: &'a Bump) -> Self
     where
         D: GlDisplay,

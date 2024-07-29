@@ -1,20 +1,19 @@
 #![feature(allocator_api)]
 
-pub mod application_context;
-pub mod drawables;
-pub mod errors;
-pub mod gl;
+pub mod common;
+pub mod three_d;
+pub mod two_d;
+use common::errors::DuendeError;
 pub use winit::keyboard::NamedKey;
 
 mod internal_game_loop;
-mod mut_cell;
+mod utils;
 
-use application_context::ApplicationContext;
 use bumpalo::Bump;
-use errors::DuendeError;
 use glutin::config::ConfigTemplateBuilder;
 use glutin_winit::DisplayBuilder;
 use internal_game_loop::InnerApplication;
+use three_d::application_context::ThreeDApplicationContext;
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize, Position, Size},
     event_loop::EventLoop,
@@ -125,7 +124,7 @@ impl Application {
 }
 
 pub trait Game {
-    fn game_loop(&self, context: &mut ApplicationContext);
-    fn setup(&self, _context: &mut ApplicationContext) {}
-    fn teardown(&self, _context: &mut ApplicationContext) {}
+    fn game_loop(&self, context: &mut ThreeDApplicationContext);
+    fn setup(&self, _context: &mut ThreeDApplicationContext) {}
+    fn teardown(&self, _context: &mut ThreeDApplicationContext) {}
 }

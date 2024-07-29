@@ -1,6 +1,6 @@
 use crate::{
-    application_context::{ApplicationContext, Command, Event},
-    errors::{DuendeError, UnsupportedDevice},
+    common::errors::{DuendeError, UnsupportedDevice},
+    three_d::application_context::{Command, Event, ThreeDApplicationContext},
     ApplicationBuilder, Game,
 };
 use bumpalo::Bump;
@@ -28,7 +28,7 @@ pub(crate) struct InnerApplication<'a, G> {
     template: ConfigTemplateBuilder,
     display_builder: DisplayBuilder,
     game_loop: G,
-    context: Option<ApplicationContext<'a>>,
+    context: Option<ThreeDApplicationContext<'a>>,
     window_attributes: WindowAttributes,
     not_current_gl_context: Option<NotCurrentContext>,
     state: Option<AppState>,
@@ -52,7 +52,7 @@ where
         Self {
             template,
             display_builder,
-            game_loop: game_loop,
+            game_loop,
             context: None,
             window_attributes,
             not_current_gl_context: None,
@@ -102,13 +102,11 @@ where
             let window_attributes = self.window_attributes.clone();
             glutin_winit::finalize_window(event_loop, window_attributes, &gl_config).unwrap()
         });
-        if self.builder.grab_mouse {
-            if window.set_cursor_grab(CursorGrabMode::None).is_err() {
-                self.exit_with_error(
-                    event_loop,
-                    DuendeError::UnsupportedDevice(UnsupportedDevice::CursorGrab),
-                );
-            }
+        if self.builder.grab_mouse && window.set_cursor_grab(CursorGrabMode::None).is_err() {
+            self.exit_with_error(
+                event_loop,
+                DuendeError::UnsupportedDevice(UnsupportedDevice::CursorGrab),
+            );
         }
         if !self.builder.mouse_cursor_visible {
             window.set_cursor_visible(false);
@@ -124,7 +122,7 @@ where
         };
         let gl_context = not_current_gl_context.make_current(&gl_surface).unwrap();
         self.context
-            .get_or_insert_with(|| ApplicationContext::new(&gl_display, &self.bump));
+            .get_or_insert_with(|| ThreeDApplicationContext::new(&gl_display, self.bump));
         if let Err(res) = gl_surface
             .set_swap_interval(&gl_context, SwapInterval::Wait(NonZeroU32::new(1).unwrap()))
         {
@@ -190,8 +188,8 @@ where
             window,
         }) = self.state.as_ref()
         {
-            let mut context = self.context.as_mut().unwrap();
-            self.game_loop.game_loop(&mut context);
+            let context = self.context.as_mut().unwrap();
+            self.game_loop.game_loop(context);
             let commands = context.pop_all_commands();
             let mut exit = false;
             let mut error = Ok(());
@@ -272,5 +270,5 @@ fn gl_config_picker(mut configs: Box<dyn Iterator<Item = Config> + '_>) -> Confi
 
     configs
         .find(|config| config.num_samples() == DEFAULT_MSAA)
-        .expect(format!("unsupported msaa: {DEFAULT_MSAA}").as_str())
+        .expect(&format!("unsupported msaa: {DEFAULT_MSAA}"))
 }
