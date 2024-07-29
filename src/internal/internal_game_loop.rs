@@ -1,6 +1,6 @@
 use crate::{
     common::errors::{DuendeError, UnsupportedDevice},
-    three_d::application_context::{Command, Event, ThreeDApplicationContext},
+    three_d::three_d_application_context::{Command, Event, ThreeDApplicationContext},
     ApplicationBuilder, Game,
 };
 use bumpalo::Bump;

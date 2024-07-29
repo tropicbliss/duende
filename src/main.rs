@@ -1,7 +1,7 @@
 use duende::{
     three_d::{
-        application_context::ThreeDApplicationContext,
         game_objects::test_game_object::TestGameObject,
+        three_d_application_context::ThreeDApplicationContext,
     },
     ApplicationBuilder, Game,
 };

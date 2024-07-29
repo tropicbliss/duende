@@ -4,16 +4,16 @@ pub mod common;
 pub mod three_d;
 pub mod two_d;
 use common::errors::DuendeError;
+use internal::internal_game_loop::InnerApplication;
 pub use winit::keyboard::NamedKey;
 
-mod internal_game_loop;
+mod internal;
 mod utils;
 
 use bumpalo::Bump;
 use glutin::config::ConfigTemplateBuilder;
 use glutin_winit::DisplayBuilder;
-use internal_game_loop::InnerApplication;
-use three_d::application_context::ThreeDApplicationContext;
+use three_d::three_d_application_context::ThreeDApplicationContext;
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize, Position, Size},
     event_loop::EventLoop,
