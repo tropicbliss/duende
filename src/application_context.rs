@@ -105,6 +105,7 @@ impl<'a> ApplicationContext<'a> {
         while let Some(commands) = self.renderer_context.command_queue.pop() {
             (commands)();
         }
+        self.input_events.clear();
         Ok(())
     }
 
