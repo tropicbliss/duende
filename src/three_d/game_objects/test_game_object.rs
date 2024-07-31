@@ -35,7 +35,7 @@ impl Drawable for TestGameObject {
     fn draw(&self, ctx: &mut RendererContext<'_>) -> Result<(), GlError> {
         unsafe {
             let program_id = self.program.get_program_id()?;
-            let vao_ref = self.vao.get_vao_ref();
+            let vao_ref = self.vao.get_vao_ref().get_vao_ref();
             ctx.add_commands(move || {
                 gl::BindVertexArray(vao_ref);
                 gl::UseProgram(program_id);

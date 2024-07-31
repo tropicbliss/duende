@@ -54,11 +54,30 @@ impl VaoWrapper {
         }
     }
 
-    pub fn get_vao_ref(&self) -> u32 {
-        *self.vao_ref.get_or_init(|| unsafe {
+    pub fn get_vao_ref(&self) -> VaoHandle {
+        let vao_ref = *self.vao_ref.get_or_init(|| unsafe {
             let mut vao_ref = 0;
             gl::GenVertexArrays(1, &mut vao_ref);
             vao_ref
-        })
+        });
+        VaoHandle { vao_ref }
+    }
+}
+
+pub struct VaoHandle {
+    vao_ref: u32,
+}
+
+impl VaoHandle {
+    pub fn get_vao_ref(&self) -> u32 {
+        self.vao_ref
+    }
+}
+
+impl Drop for VaoHandle {
+    fn drop(&mut self) {
+        unsafe {
+            gl::BindVertexArray(0);
+        }
     }
 }
