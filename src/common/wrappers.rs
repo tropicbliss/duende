@@ -54,8 +54,8 @@ impl VaoWrapper {
         }
     }
 
-    pub fn get_vao_ref(&self) -> VaoHandle {
-        let vao_ref = *self.vao_ref.get_or_init(|| unsafe {
+    pub unsafe fn get_vao_ref(&self) -> VaoHandle {
+        let vao_ref = *self.vao_ref.get_or_init(|| {
             let mut vao_ref = 0;
             gl::GenVertexArrays(1, &mut vao_ref);
             vao_ref
