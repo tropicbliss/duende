@@ -1,18 +1,16 @@
-use bumpalo::Bump;
-use std::{
-    cell::OnceCell,
-    ffi::CString,
-    sync::{
-        atomic::{AtomicU32, Ordering},
-        Arc, LazyLock,
-    },
-};
-
 use crate::common::{
     errors::GlError,
     gl::{
         self,
         types::{GLchar, GLint},
+    },
+};
+use bumpalo::Bump;
+use std::{
+    ffi::CString,
+    sync::{
+        atomic::{AtomicU32, Ordering},
+        Arc, LazyLock,
     },
 };
 
@@ -22,41 +20,6 @@ pub struct Vertex;
 
 pub trait Drawable {
     fn draw(&self, ctx: &mut RendererContext) -> Result<(), GlError>;
-}
-
-pub struct ProgramWrapper {
-    program: OnceCell<Result<Program, GlError>>,
-    vertex_shader: &'static Shader<Vertex>,
-    fragment_shader: &'static Shader<Fragment>,
-}
-
-impl ProgramWrapper {
-    pub fn new(
-        vertex_shader: &'static Shader<Vertex>,
-        fragment_shader: &'static Shader<Fragment>,
-    ) -> Self {
-        Self {
-            program: OnceCell::new(),
-            vertex_shader,
-            fragment_shader,
-        }
-    }
-
-    pub unsafe fn get_program_id(&self) -> Result<u32, GlError> {
-        let program_result = self.program.get_or_init(|| {
-            Program::new(
-                self.vertex_shader.get_shader_handle()?,
-                self.fragment_shader.get_shader_handle()?,
-            )
-        });
-        let program = match program_result {
-            Ok(prog) => prog,
-            Err(e) => {
-                return Err(e.clone());
-            }
-        };
-        Ok(program.program_id)
-    }
 }
 
 pub struct Shader<T> {
@@ -113,10 +76,10 @@ impl Shader<Vertex> {
     }
 }
 
-struct Program {
+pub(crate) struct Program {
     _vertex_shader: ShaderHandle<Vertex>,
     _fragment_shader: ShaderHandle<Fragment>,
-    program_id: u32,
+    pub(crate) program_id: u32,
 }
 
 impl Program {

@@ -1,7 +1,8 @@
 use crate::common::{
-    drawables::{Drawable, Fragment, ProgramWrapper, RendererContext, Shader, Vertex},
+    drawables::{Drawable, Fragment, RendererContext, Shader, Vertex},
     errors::GlError,
     gl,
+    wrappers::{ProgramWrapper, VaoWrapper},
 };
 
 static FRAGMENT: Shader<Fragment> =
@@ -12,12 +13,14 @@ static VERTEX: Shader<Vertex> =
 
 pub struct TestGameObject {
     program: ProgramWrapper,
+    vao: VaoWrapper,
 }
 
 impl TestGameObject {
     pub fn new() -> Self {
         Self {
             program: ProgramWrapper::new(&VERTEX, &FRAGMENT),
+            vao: VaoWrapper::new(),
         }
     }
 }
@@ -32,7 +35,9 @@ impl Drawable for TestGameObject {
     fn draw(&self, ctx: &mut RendererContext<'_>) -> Result<(), GlError> {
         unsafe {
             let program_id = self.program.get_program_id()?;
+            let vao_ref = self.vao.get_vao_ref();
             ctx.add_commands(move || {
+                gl::BindVertexArray(vao_ref);
                 gl::UseProgram(program_id);
                 gl::DrawArrays(gl::POINTS, 0, 1);
                 gl::PointSize(10.0);
