@@ -32,15 +32,16 @@ impl Default for TestGameObject {
 impl Drawable for TestGameObject {
     fn draw(&self, ctx: &mut RendererContext<'_>) -> Result<(), GlError> {
         unsafe {
-            let program_id = self
-                .program_id
-                .get_or_init(|| {
-                    let vertex_shader = VERTEX.get_shader_handle()?;
-                    let fragment_shader = FRAGMENT.get_shader_handle()?;
-                    let program_id = create_program(&vertex_shader, &fragment_shader)?;
-                    Ok(program_id)
-                })
-                .clone()?;
+            let program_id = self.program_id.get_or_init(|| {
+                let vertex_shader = VERTEX.get_shader_handle()?;
+                let fragment_shader = FRAGMENT.get_shader_handle()?;
+                let program_id = create_program(&vertex_shader, &fragment_shader)?;
+                Ok(program_id)
+            });
+            let program_id = match program_id {
+                Ok(program_id) => *program_id,
+                Err(e) => return Err(e.clone()),
+            };
             ctx.add_commands(move || {
                 gl::UseProgram(program_id);
                 gl::PointSize(10.0);
