@@ -76,35 +76,6 @@ impl Shader<Vertex> {
     }
 }
 
-pub(crate) struct Program {
-    _vertex_shader: ShaderHandle<Vertex>,
-    _fragment_shader: ShaderHandle<Fragment>,
-    pub(crate) program_id: u32,
-}
-
-impl Program {
-    /// # SAFETY: Keep this program around for the entirety of the game object's lifespan. Do not drop this prematurely.
-    pub unsafe fn new(
-        vertex_shader: ShaderHandle<Vertex>,
-        fragment_shader: ShaderHandle<Fragment>,
-    ) -> Result<Self, GlError> {
-        let program_id = create_program(&vertex_shader, &fragment_shader)?;
-        Ok(Self {
-            _vertex_shader: vertex_shader,
-            _fragment_shader: fragment_shader,
-            program_id,
-        })
-    }
-}
-
-impl Drop for Program {
-    fn drop(&mut self) {
-        unsafe {
-            gl::DeleteProgram(self.program_id);
-        }
-    }
-}
-
 #[derive(Clone)]
 pub struct ShaderHandle<T> {
     shader_id: Arc<AtomicU32>,
@@ -127,7 +98,7 @@ impl<T> Drop for ShaderHandle<T> {
     }
 }
 
-unsafe fn compile_shader(
+pub unsafe fn compile_shader(
     shader: gl::types::GLenum,
     source: &[u8],
 ) -> Result<gl::types::GLuint, GlError> {
@@ -158,7 +129,7 @@ unsafe fn compile_shader(
     Ok(shader)
 }
 
-unsafe fn create_program(
+pub unsafe fn create_program(
     vertex_shader: &ShaderHandle<Vertex>,
     fragment_shader: &ShaderHandle<Fragment>,
 ) -> Result<u32, GlError> {

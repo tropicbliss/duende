@@ -1,9 +1,9 @@
 use crate::common::{
-    drawables::{Drawable, Fragment, RendererContext, Shader, Vertex},
+    drawables::{create_program, Drawable, Fragment, RendererContext, Shader, Vertex},
     errors::GlError,
     gl,
-    wrappers::{ProgramWrapper, VaoWrapper},
 };
+use std::cell::OnceCell;
 
 static FRAGMENT: Shader<Fragment> =
     Shader::create_fragment_shader(include_str!("shaders/fragment_shader.glsl"));
@@ -12,15 +12,13 @@ static VERTEX: Shader<Vertex> =
     Shader::create_vertex_shader(include_str!("shaders/vertex_shader.glsl"));
 
 pub struct TestGameObject {
-    program: ProgramWrapper,
-    vao: VaoWrapper,
+    program_id: OnceCell<Result<u32, GlError>>,
 }
 
 impl TestGameObject {
     pub fn new() -> Self {
         Self {
-            program: ProgramWrapper::new(&VERTEX, &FRAGMENT),
-            vao: VaoWrapper::new(),
+            program_id: OnceCell::new(),
         }
     }
 }
@@ -34,15 +32,31 @@ impl Default for TestGameObject {
 impl Drawable for TestGameObject {
     fn draw(&self, ctx: &mut RendererContext<'_>) -> Result<(), GlError> {
         unsafe {
-            let program_id = self.program.get_program_id()?;
-            let vao_ref = self.vao.get_vao_ref().get_vao_ref();
+            let program_id = self
+                .program_id
+                .get_or_init(|| {
+                    let vertex_shader = VERTEX.get_shader_handle()?;
+                    let fragment_shader = FRAGMENT.get_shader_handle()?;
+                    let program_id = create_program(&vertex_shader, &fragment_shader)?;
+                    Ok(program_id)
+                })
+                .clone()?;
             ctx.add_commands(move || {
-                gl::BindVertexArray(vao_ref);
                 gl::UseProgram(program_id);
-                gl::DrawArrays(gl::POINTS, 0, 1);
                 gl::PointSize(10.0);
+                gl::DrawArrays(gl::POINTS, 0, 1);
             });
             Ok(())
+        }
+    }
+}
+
+impl Drop for TestGameObject {
+    fn drop(&mut self) {
+        unsafe {
+            if let Some(Ok(program_id)) = self.program_id.get() {
+                gl::DeleteProgram(*program_id);
+            }
         }
     }
 }
