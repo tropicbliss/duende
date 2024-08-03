@@ -5,3 +5,4 @@ pub mod errors;
 pub mod game;
 pub mod gl;
 pub mod helpers;
+pub mod wrappers;
