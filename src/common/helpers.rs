@@ -168,7 +168,7 @@ pub unsafe fn create_variable(program_id: u32, variable_name: &'static str) -> R
         3,
         gl::FLOAT,
         gl::FALSE,
-        3,
+        0,
         std::ptr::null(),
     );
     Ok(())
