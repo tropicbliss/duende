@@ -1,3 +1,5 @@
+use std::cell::Cell;
+
 use crate::common::{
     drawables::{Drawable, RendererContext},
     errors::GlError,
@@ -14,7 +16,7 @@ static VERTEX: Shader<Vertex> =
 
 pub struct TestGameObject<const N: usize> {
     program_wrapper: ProgramWrapper,
-    created_variable: bool,
+    initialized: Cell<bool>,
     vertices: [f32; N],
 }
 
@@ -22,7 +24,7 @@ impl<const N: usize> TestGameObject<N> {
     pub fn new(vertices: [f32; N]) -> Self {
         Self {
             program_wrapper: ProgramWrapper::new(&VERTEX, &FRAGMENT),
-            created_variable: true,
+            initialized: Cell::new(false),
             vertices,
         }
     }
@@ -36,7 +38,7 @@ impl<const N: usize> Drawable for TestGameObject<N> {
             let vbo_ref = self.program_wrapper.get_vbo_ref();
             let vertices_len = self.vertices.len();
             let vertices_ptr = self.vertices.as_ptr();
-            let created_variable = self.created_variable;
+            let created_variable = !self.initialized.get();
             ctx.add_commands(move || {
                 gl::UseProgram(program_id);
                 gl::BindVertexArray(vao_ref);
@@ -53,6 +55,7 @@ impl<const N: usize> Drawable for TestGameObject<N> {
                 gl::PointSize(10.0);
                 gl::DrawArrays(gl::POINTS, 0, vertices_len as i32);
             });
+            self.initialized.set(true);
             Ok(())
         }
     }
