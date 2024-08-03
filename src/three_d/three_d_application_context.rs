@@ -26,29 +26,25 @@ impl<'a> ThreeDApplicationContext<'a> {
     where
         D: GlDisplay,
     {
-        unsafe {
-            gl::load_with(|symbol| {
-                let symbol = CString::new(symbol).unwrap();
-                gl_display.get_proc_address(symbol.as_c_str()).cast()
-            });
-            if let Some(renderer) = get_gl_string(gl::RENDERER) {
-                info!("Running on {}", renderer.to_string_lossy());
-            }
-            if let Some(version) = get_gl_string(gl::VERSION) {
-                info!("OpenGL Version {}", version.to_string_lossy());
-            }
-            if let Some(shaders_version) = get_gl_string(gl::SHADING_LANGUAGE_VERSION) {
-                info!("Shaders version on {}", shaders_version.to_string_lossy());
-            }
-            gl::MatrixMode(gl::PROJECTION);
-            gl::LoadIdentity();
-            Self {
-                input_events: FnvHashSet::default(),
-                output_commands: Vec::new_in(bump),
-                background_color: MutCell::new(InternalColor::default()),
-                renderer_context: RendererContext::new(bump),
-                exit_status: Ok(()),
-            }
+        gl::load_with(|symbol| {
+            let symbol = CString::new(symbol).unwrap();
+            gl_display.get_proc_address(symbol.as_c_str()).cast()
+        });
+        if let Some(renderer) = get_gl_string(gl::RENDERER) {
+            info!("Running on {}", renderer.to_string_lossy());
+        }
+        if let Some(version) = get_gl_string(gl::VERSION) {
+            info!("OpenGL Version {}", version.to_string_lossy());
+        }
+        if let Some(shaders_version) = get_gl_string(gl::SHADING_LANGUAGE_VERSION) {
+            info!("Shaders version on {}", shaders_version.to_string_lossy());
+        }
+        Self {
+            input_events: FnvHashSet::default(),
+            output_commands: Vec::new_in(bump),
+            background_color: MutCell::new(InternalColor::default()),
+            renderer_context: RendererContext::new(bump),
+            exit_status: Ok(()),
         }
     }
 

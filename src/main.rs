@@ -1,9 +1,9 @@
 use duende::{
+    common::{application_builder::ApplicationBuilder, game::Game},
     three_d::{
         game_objects::test_game_object::TestGameObject,
         three_d_application_context::ThreeDApplicationContext,
     },
-    ApplicationBuilder, Game,
 };
 use winit::keyboard::NamedKey;
 
@@ -13,13 +13,15 @@ fn main() {
 }
 
 struct TestGame {
-    object: TestGameObject,
+    object: TestGameObject<15>,
 }
 
 impl TestGame {
     pub fn new() -> Self {
         Self {
-            object: TestGameObject::new(),
+            object: TestGameObject::new([
+                0.0, -0.9, 0.0, -0.6, 0.8, 0.0, 0.9, -0.2, 0.0, -0.9, -0.2, 0.0, 0.6, 0.8, 0.0,
+            ]),
         }
     }
 }

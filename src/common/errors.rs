@@ -23,4 +23,10 @@ pub enum GlError {
 
     #[error("program link error: {0}")]
     ProgramLink(String),
+
+    #[error("shader code must not contain a null byte")]
+    NullByte,
+
+    #[error("unable to find variable: {0}")]
+    NonexistantVariableName(&'static str),
 }

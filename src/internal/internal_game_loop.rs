@@ -1,7 +1,10 @@
 use crate::{
-    common::errors::{DuendeError, UnsupportedDevice},
+    common::{
+        application_builder::ApplicationBuilder,
+        errors::{DuendeError, UnsupportedDevice},
+        game::Game,
+    },
     three_d::three_d_application_context::{Command, Event, ThreeDApplicationContext},
-    ApplicationBuilder, Game,
 };
 use bumpalo::Bump;
 use glutin::{
