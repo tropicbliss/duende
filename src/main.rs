@@ -4,6 +4,7 @@ use duende::{
         game_objects::test_game_object::TestGameObject,
         three_d_application_context::ThreeDApplicationContext,
     },
+    Matrix3xX, Vector3,
 };
 use winit::keyboard::NamedKey;
 
@@ -13,15 +14,19 @@ fn main() {
 }
 
 struct TestGame {
-    object: TestGameObject<15>,
+    object: TestGameObject,
 }
 
 impl TestGame {
     pub fn new() -> Self {
         Self {
-            object: TestGameObject::new([
-                0.0, -0.9, 0.0, -0.6, 0.8, 0.0, 0.9, -0.2, 0.0, -0.9, -0.2, 0.0, 0.6, 0.8, 0.0,
-            ]),
+            object: TestGameObject::new(Matrix3xX::from_columns(&[
+                Vector3::new(0.0, -0.9, 0.0),
+                Vector3::new(-0.6, 0.8, 0.0),
+                Vector3::new(0.9, -0.2, 0.0),
+                Vector3::new(-0.9, -0.2, 0.0),
+                Vector3::new(0.6, 0.8, 0.0),
+            ])),
         }
     }
 }

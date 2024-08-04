@@ -12,6 +12,7 @@ tracing = "0.1"
 fnv = "1.0"
 thiserror = "1.0"
 bumpalo = { version = "3.16.0", features = ["allocator_api"] }
+nalgebra = "0.33"
 
 [build-dependencies]
 cfg_aliases = "0.2.1"
