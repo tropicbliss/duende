@@ -32,8 +32,8 @@ impl Game for TestGame {
         if context.is_key_pressed(NamedKey::Escape) {
             context.exit();
         }
-        self.object.mutate();
         context.draw_game_object(&self.object);
+        self.object.mutate();
     }
 
     fn teardown(&mut self, _context: &mut ThreeDApplicationContext) {
