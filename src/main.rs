@@ -28,14 +28,15 @@ impl TestGame {
 }
 
 impl Game for TestGame {
-    fn game_loop(&self, context: &mut ThreeDApplicationContext) {
+    fn game_loop(&mut self, context: &mut ThreeDApplicationContext) {
         if context.is_key_pressed(NamedKey::Escape) {
             context.exit();
         }
+        self.object.mutate();
         context.draw_game_object(&self.object);
     }
 
-    fn teardown(&self, _context: &mut ThreeDApplicationContext) {
+    fn teardown(&mut self, _context: &mut ThreeDApplicationContext) {
         println!("Bye bye!");
     }
 }
