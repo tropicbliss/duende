@@ -6,7 +6,6 @@ use crate::common::{
     wrappers::program_wrapper::ProgramWrapper,
 };
 use nalgebra::Matrix3xX;
-use rand::{rngs::ThreadRng, Rng};
 use std::cell::Cell;
 
 static FRAGMENT: Shader<Fragment> =
@@ -19,7 +18,6 @@ pub struct TestGameObject {
     program_wrapper: ProgramWrapper,
     initialized: Cell<bool>,
     vertices: Matrix3xX<f32>,
-    rng: ThreadRng,
 }
 
 impl TestGameObject {
@@ -28,7 +26,6 @@ impl TestGameObject {
             program_wrapper: ProgramWrapper::new(&VERTEX, &FRAGMENT),
             initialized: Cell::new(false),
             vertices,
-            rng: rand::thread_rng(),
         }
     }
 }
@@ -67,23 +64,7 @@ impl Drawable for TestGameObject {
 }
 
 impl TestGameObject {
-    pub fn mutate(&mut self) {
-        for i in 0..self.vertices.nrows() {
-            for j in 0..self.vertices.ncols() {
-                let random_boolean: bool = self.rng.r#gen();
-                let increment = if random_boolean { 0.001 } else { -0.001 };
-                self.vertices[(i, j)] = clamp(self.vertices[(i, j)] + increment, -1.0, 1.0);
-            }
-        }
-    }
-}
-
-fn clamp(value: f32, min: f32, max: f32) -> f32 {
-    if value < min {
-        min
-    } else if value > max {
-        max
-    } else {
-        value
+    pub fn get_vertices_as_mut(&mut self) -> &mut Matrix3xX<f32> {
+        &mut self.vertices
     }
 }

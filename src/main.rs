@@ -6,15 +6,17 @@ use duende::{
     },
     Matrix3xX,
 };
+use rand::{rngs::ThreadRng, Rng};
 use winit::keyboard::NamedKey;
 
 fn main() {
-    let app = ApplicationBuilder::new().build();
+    let app = ApplicationBuilder::new().title("Test").build();
     app.render(TestGame::new()).unwrap();
 }
 
 struct TestGame {
     object: TestGameObject,
+    rng: ThreadRng
 }
 
 impl TestGame {
@@ -23,6 +25,7 @@ impl TestGame {
             object: TestGameObject::new(Matrix3xX::from_column_slice(&[
                 0.0, -0.9, 0.0, -0.6, 0.8, 0.0, 0.9, -0.2, 0.0, -0.9, -0.2, 0.0, 0.6, 0.8, 0.0,
             ])),
+            rng: rand::thread_rng(),
         }
     }
 }
@@ -33,10 +36,27 @@ impl Game for TestGame {
             context.exit();
         }
         context.draw_game_object(&self.object);
-        self.object.mutate();
+        let vertices = self.object.get_vertices_as_mut();
+        for i in 0..vertices.nrows() {
+            for j in 0..vertices.ncols() {
+                let random_boolean: bool = self.rng.r#gen();
+                let increment = if random_boolean { 0.001 } else { -0.001 };
+                vertices[(i, j)] = clamp(vertices[(i, j)] + increment, -1.0, 1.0);
+            }
+        }
     }
 
     fn teardown(&mut self, _context: &mut ThreeDApplicationContext) {
         println!("Bye bye!");
+    }
+}
+
+fn clamp(value: f32, min: f32, max: f32) -> f32 {
+    if value < min {
+        min
+    } else if value > max {
+        max
+    } else {
+        value
     }
 }
