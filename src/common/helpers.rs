@@ -154,22 +154,3 @@ pub unsafe fn create_program(
     }
     Ok(program_id)
 }
-
-/// Remember, you only need to call this once
-pub unsafe fn create_variable(program_id: u32, variable_name: &'static str) -> Result<(), GlError> {
-    let attrib_name = CString::new(variable_name).map_err(|_| GlError::NullByte)?;
-    let variable_id = gl::GetAttribLocation(program_id, attrib_name.as_ptr());
-    if variable_id == -1 {
-        return Err(GlError::NonexistantVariableName(variable_name));
-    }
-    gl::EnableVertexAttribArray(variable_id as u32);
-    gl::VertexAttribPointer(
-        variable_id as u32,
-        3,
-        gl::FLOAT,
-        gl::FALSE,
-        0,
-        std::ptr::null(),
-    );
-    Ok(())
-}

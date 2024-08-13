@@ -16,15 +16,20 @@ fn main() {
 
 struct TestGame {
     object: TestGameObject,
-    rng: ThreadRng
+    rng: ThreadRng,
 }
 
 impl TestGame {
     pub fn new() -> Self {
         Self {
-            object: TestGameObject::new(Matrix3xX::from_column_slice(&[
-                0.0, -0.9, 0.0, -0.6, 0.8, 0.0, 0.9, -0.2, 0.0, -0.9, -0.2, 0.0, 0.6, 0.8, 0.0,
-            ])),
+            object: TestGameObject::new(
+                Matrix3xX::from_column_slice(&[
+                    0.0, -0.9, 0.0, -0.6, 0.8, 0.0, 0.9, -0.2, 0.0, -0.9, -0.2, 0.0, 0.6, 0.8, 0.0,
+                ]),
+                Matrix3xX::from_column_slice(&[
+                    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0,
+                ]),
+            ),
             rng: rand::thread_rng(),
         }
     }
@@ -36,14 +41,6 @@ impl Game for TestGame {
             context.exit();
         }
         context.draw_game_object(&self.object);
-        let vertices = self.object.get_vertices_as_mut();
-        for i in 0..vertices.nrows() {
-            for j in 0..vertices.ncols() {
-                let random_boolean: bool = self.rng.r#gen();
-                let increment = if random_boolean { 0.001 } else { -0.001 };
-                vertices[(i, j)] = clamp(vertices[(i, j)] + increment, -1.0, 1.0);
-            }
-        }
     }
 
     fn teardown(&mut self, _context: &mut ThreeDApplicationContext) {
